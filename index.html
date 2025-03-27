@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Users</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 37px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 10px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+
+        .card {
+            position: relative; 
+            background: #edecec;
+            border: 3px solid #a2a2a2; 
+            border-radius: 5px;
+            width: 280px;
+            text-align: left;
+            padding: 10px;
+        }
+
+        .card img {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border: 3px solid #a2a2a2;
+            border-radius: 5px;
+        }
+
+        .card-content {
+            font-size: 12px;
+            padding-right: 80px; 
+        }
+
+        .card-content p {
+            margin
+        }
+    </style>
+</head>
+<body>
+    <h1>ABC Colleges</h1>
+    <h2>Library Users</h2>
+    <div class="container" id="studentData"></div>
+
+    <script>
+        async function loadXML() {
+            try {
+                let response = await fetch("joyceanne_reyes.xml"); 
+                if (!response.ok) throw new Error("Failed to load XML file.");
+                
+                let xmlText = await response.text();
+                let parser = new DOMParser();
+                let xml = parser.parseFromString(xmlText, "application/xml");
+                
+                let students = xml.getElementsByTagName("student");
+                let output = "";
+
+                for (let student of students) {
+                    let pic = student.getElementsByTagName("picture")[0]?.textContent || "default.jpg";
+                    let name = student.getElementsByTagName("name")[0]?.textContent || "N/A";
+                    let course = student.getElementsByTagName("course")[0]?.textContent || "N/A";
+                    let year = student.getElementsByTagName("year")[0]?.textContent || "N/A"; 
+                    let adviser = student.getElementsByTagName("adviser")[0]?.textContent || "N/A";
+                    let schoolYear = student.getElementsByTagName("schoolYear")[0]?.textContent || "N/A";
+
+                    output += `
+                        <div class="card">
+                            <img src="${pic}" alt="${name}" onerror="this.src='default.jpg'">
+                            <div class="card-content">
+                                <p><strong>Name:</strong> ${name}</p>
+                                <p><strong>Course:</strong> ${course}</p>
+                                <p><strong>Year Level / Section:</strong> ${year}</p>
+                                <p><strong>Adviser:</strong> ${adviser}</p>
+                                <p><strong>School Year:</strong> ${schoolYear}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById("studentData").innerHTML = output;
+            } catch (error) {
+                console.error("Error loading XML:", error);
+                document.getElementById("studentData").innerHTML = "<p>Error loading student data.</p>";
+            }
+        }
+
+        loadXML();
+    </script>
+</body>
+</html>
